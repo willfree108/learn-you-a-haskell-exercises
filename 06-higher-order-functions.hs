@@ -2,30 +2,43 @@
 -- Example: sumInts 0 1 = 1
 --          sumInts 1 3 = 6
 sumInts :: Int -> Int -> Int
-sumInts a b = undefined
+sumInts a b
+    | a < b = a + sumInts (succ a) b
+    | otherwise = b 
 
 -- Define a square function
 sq :: Int -> Int
-sq x = undefined
+sq x = x ^ 2
 
 -- Sum the squares between two numbers. This function should be similar to the sumInts function
 sumSquares :: Int -> Int -> Int
-sumSquares a b = undefined
+sumSquares a b = sumInts (sq a) (sq b)
 
 -- Define a higher order sum function which accepts an (Int -> Int) function to apply to all integers between two values.
 -- Again this should look similar to the sumInts and sumSquares functions
 higherOrderSum :: (Int -> Int) -> Int -> Int -> Int
-higherOrderSum intApplication a b = undefined
+higherOrderSum intApplication a b
+    | a < b = intApplication a + higherOrderSum intApplication (succ a) b
+    | otherwise = 0
 
 -- Define the square sum in terms of higherOrderSum
 hoSumSquares :: Int -> Int -> Int
-hoSumSquares = undefined
+hoSumSquares = higherOrderSum sq
 
 -- Define the sum between two values in terms of higherOrderSum
 -- Note there is no parameter on the function definition
 -- Try to use a lambda if possible
 hoSumInts :: Int -> Int -> Int
-hoSumInts = undefined
+hoSumInts = higherOrderSum (\x -> x) 
+
+reverse' :: [a] -> [a]  
+reverse' = foldl (\acc x -> x : acc) [] 
+
+reverse2 :: [a] -> [a]
+reverse2 = foldr (\x acc -> x:acc) [] 
+
+filter' :: [a] -> [a]  
+filter' = foldr (\x acc -> acc) []
 
 -- Create a new higher order method which generalises over the function provided by sumInts (That is, parameterize (+) :: Int -> Int -> Int) between a and b
 -- This will give the ability to perform utilities such as the prodcut of all squares (or any other Int -> Int function) between a and b
@@ -37,8 +50,11 @@ hoSumInts = undefined
 --  - A function to apply to each value, op :: Int -> Int
 --  - A function to apply between each value, f :: Int -> Int -> Int
 --  - A value to return in the base case when a > b, z :: Int
-higherOrderSequenceApplication = undefined
+higherOrderSequenceApplication:: (Int -> Int) -> (Int -> Int -> Int) -> Int -> Int -> Int -> Int
+higherOrderSequenceApplication f op zero a b
+  | a > b = zero
+  | otherwise = op (f a) (higherOrderSequenceApplication f op zero (a + 1) b)
 
 -- Define a factorial method using the higherOrderSequenceAppliction
 hoFactorial :: Int -> Int
-hoFactorial = undefined
+hoFactorial = higherOrderSequenceApplication id (*) 1 1 
